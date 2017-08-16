@@ -1,36 +1,19 @@
 {
+    "name": "Switch tab after close tab",
+    "version": "0.1.0",
+    "description": "Switch tab to another tab after close tab.",
+    "homepage_url": "https://github.com/yfdyh000/",
+    "author": "YFdyh000",
     "applications": {
         "gecko": {
-            "id": "opentabsnexttocurrent@sblask",
-            "strict_min_version": "51.0"
+            "id": "SwitchTabAfterCloseTab@Firefox",
+            "strict_min_version": "45.0"
         }
     },
-    "author": "Sebastian Blask",
     "background": {
         "scripts": [
-            "browser-polyfill.js",
             "background.js"
         ]
     },
-    "commands": {
-        "open-new-tab-at-default-location": {
-            "description": "Open new tab at default location",
-            "suggested_key": {
-                "default": "Ctrl+Y",
-                "windows": "Ctrl+Shift+Y"
-            }
-        }
-    },
-    "description": "Open new tabs to the right of the current one.",
-    "homepage_url": "https://github.com/sblask/webextension-open-tabs-next-to-current",
-    "icons": {
-        "128": "icon-128x128.png",
-        "16": "icon-16x16.png",
-        "32": "icon-32x32.png",
-        "48": "icon-48x48.png",
-        "64": "icon-64x64.png"
-    },
-    "manifest_version": 2,
-    "name": "Open Tabs Next to Current",
-    "version": "2.0.9"
+    "manifest_version": 2
 }

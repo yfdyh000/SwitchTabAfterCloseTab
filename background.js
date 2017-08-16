@@ -1,76 +1,23 @@
-let currentTabId = undefined;
+let currentWindowTabs;
 
-function updateCurrentTab() {
-    let query = {
-        active: true,
-        currentWindow: true,
-    };
-    browser.tabs.query(query).then(
-        (tabs) => {
-            if (tabs.length > 0) {
-                currentTabId = tabs[0].id;
-            }
-        }
-    );
+async function rememberTabs() {
+    currentWindowTabs = await browser.tabs.query({ currentWindow: true });
+    return currentWindowTabs;
 }
 
-updateCurrentTab();
+async function tabRemoved(tabId, removeInfo) {
+    if (removeInfo.isWindowClosing) return;
 
-browser.tabs.onActivated.addListener(updateCurrentTab);
-browser.windows.onFocusChanged.addListener(updateCurrentTab);
-browser.windows.onRemoved.addListener(updateCurrentTab);
-
-browser.tabs.onCreated.addListener(moveTab);
-
-browser.commands.onCommand.addListener(function(command) {
-    if (command == "open-new-tab-at-default-location") {
-        browser.tabs.onCreated.removeListener(moveTab);
-        browser.tabs.onCreated.addListener(fixListeners);
-        browser.tabs.create({});
-    }
-});
-
-function fixListeners() {
-    browser.tabs.onCreated.removeListener(fixListeners);
-    browser.tabs.onCreated.addListener(moveTab);
+    let arrayIndex = currentWindowTabs.findIndex(t => (t.id === tabId)); // oldTab
+    let newActiveTabId = currentWindowTabs[(arrayIndex > 0) ? arrayIndex - 1 : arrayIndex].id;
+    await browser.tabs.update(newActiveTabId, { active: true });
+    rememberTabs();
 }
 
-function moveTab(newTab) {
-    if (!currentTabId) {
-        return;
-    }
+rememberTabs();
 
-    Promise.all([
-        browser.windows.getCurrent({ populate: true }),
-        browser.tabs.get(currentTabId),
-    ]).then(
-        (result) => {
-            let [currentWindow, currentTab] = result;
-            if (currentTab.windowId !== newTab.windowId) {
-                // tab created by drag into window without focus change
-                return;
-            }
-
-            let isUndoCloseOrRelatedTab = newTab.index < currentWindow.tabs.length - 1;
-            let isRecoveredTab = newTab.index > currentWindow.tabs.length - 1;
-            if (!isUndoCloseOrRelatedTab && !isRecoveredTab) {
-                browser.tabs.move(newTab.id, {index: getNewIndex(currentWindow, currentTab)});
-            }
-        }
-    );
-}
-
-function getNewIndex(currentWindow, currentTab) {
-    if (!currentTab.pinned) {
-        return currentTab.index + 1;
-    }
-
-    let lastPinnedTab = undefined;
-    for (let tab of currentWindow.tabs) {
-        if (tab.pinned) {
-            lastPinnedTab = tab;
-        } else {
-            return lastPinnedTab.index + 1;
-        }
-    }
-}
+browser.windows.onFocusChanged.addListener(rememberTabs);
+browser.windows.onRemoved.addListener(rememberTabs);
+browser.tabs.onActivated.addListener(rememberTabs);
+browser.tabs.onCreated.addListener(rememberTabs);
+browser.tabs.onRemoved.addListener(tabRemoved);
