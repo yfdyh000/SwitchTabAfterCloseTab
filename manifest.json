@@ -1,6 +1,6 @@
 {
     "name": "Switch tab after close tab",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Switch tab to another tab after close tab.",
     "homepage_url": "https://github.com/yfdyh000/",
     "author": "YFdyh000",
@@ -15,5 +15,8 @@
             "background.js"
         ]
     },
+    "permissions": [
+        "management"
+    ],
     "manifest_version": 2
 }
