@@ -2,7 +2,7 @@
     "name": "__MSG_extensionName__",
     "version": "0.2.0",
     "description": "__MSG_extensionDescription__",
-    "homepage_url": "https://github.com/yfdyh000/",
+    "homepage_url": "https://github.com/yfdyh000/SwitchTabAfterCloseTab",
     "author": "YFdyh000",
     "applications": {
         "gecko": {
