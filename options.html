@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <form>
+      <label id="switchLabel" i18n-id="switchLabel">Switch to which tab when a tab closed:</label>
+      <input name="switchTab" id="first" type="radio" value="first">
+      <label for="first" i18n-id="first"></label>
+      <input name="switchTab" id="last" type="radio" value="last">
+      <label for="last" i18n-id="last"></label>
+      <input name="switchTab" id="next" type="radio" value="next">
+      <label for="next" i18n-id="next"></label>
+      <input name="switchTab" id="end" type="radio" value="end">
+      <label for="end" i18n-id="end"></label>
+      <br>
+      <!-- TODO: skip pinned, skip unloaded. opener support in bug 1238314 -->
+      <label for="delayInput" id="delayLabel" i18n-id="delayLabel">
+        Delay (ms) to remember tabs to be compatible with other extensions:
+      </label>
+      <input type="number" id="delayInput" style="width: 5em" step="100" min="0">
+    <script src="options.js"></script>
+    </form>
+  </body>
+</html>

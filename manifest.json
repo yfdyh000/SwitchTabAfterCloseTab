@@ -1,7 +1,7 @@
 {
-    "name": "Switch tab after close tab",
+    "name": "__MSG_extensionName__",
     "version": "0.2.0",
-    "description": "Switch tab to another tab after close tab.",
+    "description": "__MSG_extensionDescription__",
     "homepage_url": "https://github.com/yfdyh000/",
     "author": "YFdyh000",
     "applications": {
@@ -16,7 +16,12 @@
         ]
     },
     "permissions": [
-        "management"
+        "management",
+        "storage"
     ],
+    "options_ui": {
+        "page": "options.html"
+    },
+    "default_locale": "en",
     "manifest_version": 2
 }

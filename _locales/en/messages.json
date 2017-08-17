@@ -1,0 +1,34 @@
+{
+    "extensionName": {
+        "message": "Switch tab after close tab",
+        "description": ""
+    },
+    "extensionDescription": {
+        "message": "Switch tab to another tab after close tab.",
+        "description": ""
+    },
+    "elem_switchLabel": {
+        "message": "Switch to which tab when a tab closed:",
+        "description": ""
+    },
+    "elem_first": {
+        "message": "First",
+        "description": "First tab on tabs bar."
+    },
+    "elem_last": {
+        "message": "Last",
+        "description": "Previous tab of closed tab."
+    },
+    "elem_next": {
+        "message": "Next",
+        "description": "Next tab of closed tab."
+    },
+    "elem_end": {
+        "message": "End",
+        "description": "End tab on tabs bar."
+    },
+    "elem_delayLabel": {
+        "message": "Delay (ms) to remember tabs to be compatible with other extensions:",
+        "description": ""
+    }
+}

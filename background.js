@@ -1,9 +1,10 @@
-let currentWindowTabs;
+let windowTabs;
 let delayOnCreated = 0;
+let activeTabChoose;
 
 async function rememberTabs() {
-    currentWindowTabs = await browser.tabs.query({ currentWindow: true });
-    return currentWindowTabs;
+    windowTabs = await browser.tabs.query({ currentWindow: true });
+    return windowTabs;
 }
 
 async function delay_rememberTabs() {
@@ -15,8 +16,25 @@ async function delay_rememberTabs() {
 async function tabRemoved(tabId, removeInfo) {
     if (removeInfo.isWindowClosing) return;
 
-    let arrayIndex = currentWindowTabs.findIndex(t => (t.id === tabId)); // oldTab
-    let newActiveTabId = currentWindowTabs[(arrayIndex > 0) ? arrayIndex - 1 : arrayIndex].id;
+    let arrayIndex = windowTabs.findIndex(t => (t.id === tabId)); // oldTab
+    let newIndex = (arrayIndex > 0) ? arrayIndex - 1 : arrayIndex; // default: last; TODO: The future should be opened or default behavior.
+    console.log(`activeTabChoose is ${activeTabChoose}`);
+    switch (activeTabChoose) {
+        case "first":
+            newIndex = 0;
+            break;
+        case "last": // previous
+            break;
+        case "next":
+            newIndex = (arrayIndex < windowTabs.length) ? arrayIndex + 1 : arrayIndex;
+            break;
+        case "end":
+            newIndex = windowTabs.length - 1;
+            break;
+        default:
+            break;
+    }
+    let newActiveTabId = windowTabs[newIndex].id;
     await browser.tabs.update(newActiveTabId, { active: true });
     rememberTabs();
 }
@@ -24,13 +42,18 @@ async function tabRemoved(tabId, removeInfo) {
 async function detectConflictAddons() {
     browser.management.get("opentabsnexttocurrent@sblask").then((ExtensionInfo) => {
         if (!ExtensionInfo.enabled) return;
-        console.warn(`"Open Tabs Next to Current" is enabled, attempt delay to avoid conflicts.`)
-        delayOnCreated = 500; // TODO: Any more reliable ways? Or make it customizable is needed?
+        console.warn(`"Open Tabs Next to Current" is enabled, attempt delay 500ms to avoid conflicts.`)
+        if (delayOnCreated < 500)
+          delayOnCreated = 500; // TODO: Any more reliable ways?
     });
 }
 
-rememberTabs();
-detectConflictAddons();
+async function init() {
+    activeTabChoose = (await browser.storage.sync.get("activeTab")).activeTab;
+    rememberTabs();
+    detectConflictAddons();
+}
+init();
 
 browser.windows.onFocusChanged.addListener(rememberTabs);
 browser.windows.onRemoved.addListener(rememberTabs);
@@ -38,3 +61,13 @@ browser.tabs.onActivated.addListener(rememberTabs);
 browser.tabs.onCreated.addListener(delay_rememberTabs);
 browser.tabs.onRemoved.addListener(tabRemoved);
 browser.management.onEnabled.addListener(detectConflictAddons);
+
+async function storageChange(c) {
+    if (c.activeTab) {
+        activeTabChoose = c.activeTab.newValue;
+    }
+    if (c.delayOnCreated) {
+        delayOnCreated = parseInt(c.delayOnCreated.newValue);
+    }
+}
+browser.storage.onChanged.addListener(storageChange);
