@@ -40,7 +40,7 @@ async function tabRemoved(tabId, removeInfo) {
 }
 
 async function detectConflictAddons() {
-    browser.management.get("opentabsnexttocurrent@sblask").then((ExtensionInfo) => {
+    browser.management.get("opentabsnexttocurrent@sblask").then((ExtensionInfo) => { // Fx56+ support
         if (!ExtensionInfo.enabled) return;
         console.warn(`"Open Tabs Next to Current" is enabled, attempt delay 500ms to avoid conflicts.`)
         if (delayOnCreated < 500)
@@ -51,7 +51,7 @@ async function detectConflictAddons() {
 async function init() {
     activeTabChoose = (await browser.storage.sync.get("activeTab")).activeTab;
     rememberTabs();
-    detectConflictAddons();
+    //detectConflictAddons();
 }
 init();
 
@@ -60,7 +60,7 @@ browser.windows.onRemoved.addListener(rememberTabs);
 browser.tabs.onActivated.addListener(rememberTabs);
 browser.tabs.onCreated.addListener(delay_rememberTabs);
 browser.tabs.onRemoved.addListener(tabRemoved);
-browser.management.onEnabled.addListener(detectConflictAddons);
+//browser.management.onEnabled.addListener(detectConflictAddons);
 
 async function storageChange(c) {
     if (c.activeTab) {

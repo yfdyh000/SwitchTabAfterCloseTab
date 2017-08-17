@@ -16,7 +16,6 @@
         ]
     },
     "permissions": [
-        "management",
         "storage"
     ],
     "options_ui": {
